@@ -18,12 +18,12 @@
 <v-row no-gutters>
 <v-col>
     <v-main>
-      <multipane class="vertical-panes" ref="panes" layout="vertical" :style="{height: '10px'}">
+      <multipane class="vertical-panes" ref="panes" layout="vertical" :style="{height: '10px'}" v-on:paneResize="onPanelResize">
         <div class="pane" ref="paneL" :style="{width: '50%', minWidth: '20%', maxWidth: '100%', height: '10px'}"
             :class="{'over': isDragOver}" @dragover.prevent="onDrag('over')" @dragleave.prevent="onDrag('leave')" @drop.stop.prevent="onDrop">
             <Editor ref="editor" />
         </div>
-        <multipane-resizer ref="resizer" :style="{height: '10px'}"></multipane-resizer>
+        <multipane-resizer ref="resizer" :style="{height: '10px', width: '8px'}"></multipane-resizer>
         <div class="pane" ref="paneR" :style="{flexGrow: 1, height: '10px'}">
             <PreView ref="preview" />
         </div>
@@ -111,6 +111,13 @@ export default {
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
+    },
+    onPanelResize: function (pane, resizer, size) {
+      const resizerWidth = parseInt(resizer.style.width, 10)
+      const totalWidth = this.$refs.panes.$el.clientWidth
+      const ratio = parseFloat(size) * 0.01
+      const width = Math.max(Math.floor(totalWidth * (1.0 - ratio) - resizerWidth), 0)
+      this.$refs.preview.setWidth(width)
     }
   }, // methods
   mounted: function () {
@@ -143,20 +150,18 @@ export default {
 <style scoped>
 .vertical-panes {
   width: 100%;
-  border: 1px solid #ccc;
+  border: 0px solid #ccc;
 }
 .vertical-panes > .pane {
-  border-left: 1px solid #ccc;
+  border: 0px solid #ccc;
   text-align: left;
   padding: 0px;
   overflow: hidden;
 }
-
 .multipane-resizer {
   margin: 0;
   left: 0;
-  width: 8px;
-  background: white;
+  background: #ccc;
 }
 .hidden-form {
     display: none;

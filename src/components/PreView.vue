@@ -1,5 +1,6 @@
 <template>
-    <div v-html="content" class="preview-body" />
+    <div class="preview-body" ref="previewBody" :style="{width: '100%', height: '10px'}" v-html="content">
+    </div>
 </template>
 
 <script>
@@ -12,8 +13,13 @@ export default {
   name: 'PreView',
   methods: {
     onResize: function () {
-      const height = this.$store.state.windowSize.height
-      this.clientHeight = (height - 2) + 'px'
+      const size = this.$store.state.windowSize
+      const bodyStyle = this.$refs.previewBody.style
+      bodyStyle.height = (size.height - 2) + 'px'
+    },
+    setWidth: function (width) {
+      const bodyStyle = this.$refs.previewBody.style
+      bodyStyle.width = width + 'px'
     },
     setMode: function (mode) {
       this.func = this.convert[mode]
@@ -45,5 +51,6 @@ export default {
   text-align: left;
   padding: 0px;
   margin: 0px;
+  overflow: scroll;
 }
 </style>
